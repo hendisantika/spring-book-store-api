@@ -1,5 +1,6 @@
 package id.my.hendisantika.springbookstoreapi.entity;
 
+import id.my.hendisantika.springbookstoreapi.common.Constant;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
