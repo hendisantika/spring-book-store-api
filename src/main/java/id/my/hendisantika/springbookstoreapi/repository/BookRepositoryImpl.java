@@ -3,6 +3,7 @@ package id.my.hendisantika.springbookstoreapi.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.QBean;
 import com.querydsl.jpa.impl.JPAQuery;
+import id.my.hendisantika.springbookstoreapi.dto.BookQueryDslDTO;
 import id.my.hendisantika.springbookstoreapi.entity.Book;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -64,6 +65,26 @@ public class BookRepositoryImpl implements BookRepositoryCustom {
                 .fetch();
 
         //return
+        return books;
+    }
+
+    @Override
+    public List<BookQueryDslDTO> getAllBooksByQuerDslDto(Integer year) {
+
+        // query dsl
+        JPAQuery<BookQueryDslDTO> jpaQuery = new JPAQuery<>(em);
+
+        QBean<BookQueryDslDTO> dslDTOQBean = Projections.bean(BookQueryDslDTO.class,
+                qBook.id,
+                qBook.bookType.as("type")
+        );
+
+        List<BookQueryDslDTO> books = jpaQuery
+                .select(dslDTOQBean)
+                .from(qBook)
+                .where(qBook.yearOfPublication.eq(year))
+                .fetch();
+
         return books;
     }
 }
