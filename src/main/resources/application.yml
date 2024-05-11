@@ -1,0 +1,5 @@
+spring:
+  application:
+  name:
+    spring-book-store-api
+spring.profiles.active: prod,stage,qa,dev
