@@ -2,6 +2,13 @@ package id.my.hendisantika.springbookstoreapi.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.data.web.SortHandlerMethodArgumentResolver;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,4 +25,20 @@ public class CustomWebConfig {
     @Autowired
     private JwtInterceptor jwtInterceptor;
 
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        //sort
+        SortHandlerMethodArgumentResolver sortResolver = new SortHandlerMethodArgumentResolver();
+        sortResolver.setSortParameter("order-by");
+
+        PageableHandlerMethodArgumentResolver pageResolver = new PageableHandlerMethodArgumentResolver(sortResolver);
+
+        pageResolver.setPageParameterName("page-number");
+        pageResolver.setSizeParameterName("page-size");
+        pageResolver.setOneIndexedParameters(true);
+
+        Pageable defaultPageable = PageRequest.of(0, 5);
+        pageResolver.setFallbackPageable(defaultPageable);
+
+        argumentResolvers.add(pageResolver);
+    }
 }
