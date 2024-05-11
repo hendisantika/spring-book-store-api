@@ -55,4 +55,9 @@ public class CustomWebConfig {
     public RequestMeta getRequestMeta() {
         return new RequestMeta();
     }
+
+    @Bean
+    public JwtInterceptor jwtInterceptor() {
+        return new JwtInterceptor(getRequestMeta());
+    }
 }
