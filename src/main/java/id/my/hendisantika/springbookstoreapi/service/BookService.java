@@ -4,6 +4,7 @@ import id.my.hendisantika.springbookstoreapi.common.APIResponse;
 import id.my.hendisantika.springbookstoreapi.common.BadRequestException;
 import id.my.hendisantika.springbookstoreapi.dto.AuthorDTO;
 import id.my.hendisantika.springbookstoreapi.dto.BookDTO;
+import id.my.hendisantika.springbookstoreapi.dto.BookQueryDslDTO;
 import id.my.hendisantika.springbookstoreapi.dto.BookRequestDTO;
 import id.my.hendisantika.springbookstoreapi.entity.Author;
 import id.my.hendisantika.springbookstoreapi.entity.Book;
@@ -167,4 +168,19 @@ public class BookService {
 
         return response;
     }
+
+    public APIResponse getBooksByQueryDsl(Integer year) {
+        APIResponse apiResponse = new APIResponse();
+
+        // repo to get the result
+        // List<Book> bookList = bookRepository.getAllBooksByQuerDsl(year);
+
+        List<BookQueryDslDTO> bookQueryDslDTOS = bookRepository.getAllBooksByQuerDslDto(year);
+
+        apiResponse.setData(bookQueryDslDTOS);
+
+        //return
+        return apiResponse;
+    }
+
 }
