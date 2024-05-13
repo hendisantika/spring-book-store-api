@@ -130,4 +130,9 @@ public class BookService {
         return bookDTO;
     }
 
+    // Update
+    public Book updateBook(Book incomingBook) {
+        return bookRepository.save(incomingBook);
+    }
+
 }
