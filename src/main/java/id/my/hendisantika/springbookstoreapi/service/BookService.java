@@ -1,10 +1,15 @@
 package id.my.hendisantika.springbookstoreapi.service;
 
+import id.my.hendisantika.springbookstoreapi.entity.Book;
 import id.my.hendisantika.springbookstoreapi.repository.BookAuthorRepository;
 import id.my.hendisantika.springbookstoreapi.repository.BookEditionRepository;
 import id.my.hendisantika.springbookstoreapi.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
@@ -27,4 +32,18 @@ public class BookService {
     private final BookValidator bookValidator;
     private final BookEditionRepository bookEditionRepository;
 
+    // Get
+    public List<Book> getBooks(Set<Integer> yop, String bookType) {
+
+        List<Book> bookList = new ArrayList<>();
+
+        if (yop == null) {
+            bookRepository.findAll()
+                    .forEach(book -> bookList.add(book));
+        } else {
+            return bookRepository.findAllByYearOfPublicationInAndBookType(yop, bookType);
+        }
+
+        return bookList;
+    }
 }
