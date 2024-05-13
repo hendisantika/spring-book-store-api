@@ -1,5 +1,6 @@
 package id.my.hendisantika.springbookstoreapi.util;
 
+import id.my.hendisantika.springbookstoreapi.common.AccessDeniedException;
 import id.my.hendisantika.springbookstoreapi.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -47,5 +48,15 @@ public class JwtUtils {
                 .setClaims(claims)
                 .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
+    }
+
+    public Claims verify(String authorization) throws Exception {
+        try {
+            Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(authorization).getBody();
+            return claims;
+        } catch (Exception e) {
+            throw new AccessDeniedException("Access Denied");
+        }
+
     }
 }
