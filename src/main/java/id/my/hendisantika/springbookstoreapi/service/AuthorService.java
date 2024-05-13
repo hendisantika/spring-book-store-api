@@ -2,6 +2,7 @@ package id.my.hendisantika.springbookstoreapi.service;
 
 import id.my.hendisantika.springbookstoreapi.common.APIResponse;
 import id.my.hendisantika.springbookstoreapi.common.PaginationMeta;
+import id.my.hendisantika.springbookstoreapi.data.AuthorData;
 import id.my.hendisantika.springbookstoreapi.entity.Author;
 import id.my.hendisantika.springbookstoreapi.repository.AuthorRepository;
 import lombok.RequiredArgsConstructor;

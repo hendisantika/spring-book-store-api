@@ -2,6 +2,7 @@ package id.my.hendisantika.springbookstoreapi.service;
 
 import id.my.hendisantika.springbookstoreapi.common.APIResponse;
 import id.my.hendisantika.springbookstoreapi.common.BadRequestException;
+import id.my.hendisantika.springbookstoreapi.data.BookData;
 import id.my.hendisantika.springbookstoreapi.dto.AuthorDTO;
 import id.my.hendisantika.springbookstoreapi.dto.BookDTO;
 import id.my.hendisantika.springbookstoreapi.dto.BookQueryDslDTO;
@@ -14,6 +15,7 @@ import id.my.hendisantika.springbookstoreapi.entity.BookEdition;
 import id.my.hendisantika.springbookstoreapi.repository.BookAuthorRepository;
 import id.my.hendisantika.springbookstoreapi.repository.BookEditionRepository;
 import id.my.hendisantika.springbookstoreapi.repository.BookRepository;
+import id.my.hendisantika.springbookstoreapi.validator.BookValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
