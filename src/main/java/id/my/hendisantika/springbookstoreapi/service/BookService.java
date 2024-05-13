@@ -6,6 +6,7 @@ import id.my.hendisantika.springbookstoreapi.dto.AuthorDTO;
 import id.my.hendisantika.springbookstoreapi.dto.BookDTO;
 import id.my.hendisantika.springbookstoreapi.dto.BookQueryDslDTO;
 import id.my.hendisantika.springbookstoreapi.dto.BookRequestDTO;
+import id.my.hendisantika.springbookstoreapi.dto.BulkBooksRequestDTO;
 import id.my.hendisantika.springbookstoreapi.entity.Author;
 import id.my.hendisantika.springbookstoreapi.entity.Book;
 import id.my.hendisantika.springbookstoreapi.entity.BookAuthor;
@@ -183,4 +184,33 @@ public class BookService {
         return apiResponse;
     }
 
+    public APIResponse bulkService(BulkBooksRequestDTO bulkBooksRequestDTO) {
+        List<Book> booksEntity = new ArrayList<>();
+//        bulkBooksRequestDTO.getBooks().forEach(each -> {
+//            Book book = new Book();
+//
+//            book.setName(each.getName());
+//            book.setDesc(each.getDesc());
+//            book.setBookType(each.getBookType());
+//            book.setYearOfPublication(each.getYearOfPublication());
+//
+//            booksEntity.add(book);
+//
+//        });
+
+        for (int i = 0; i < 100000; i++) {
+            Book book = new Book();
+
+            book.setName("book-" + i);
+            book.setDesc("book-" + i);
+            book.setBookType("book-" + i);
+            book.setYearOfPublication(2022);
+
+            booksEntity.add(book);
+        }
+
+        bookRepository.saveAll(booksEntity);
+
+        return new APIResponse();
+    }
 }
