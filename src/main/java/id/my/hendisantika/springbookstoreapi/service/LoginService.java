@@ -1,6 +1,7 @@
 package id.my.hendisantika.springbookstoreapi.service;
 
 import id.my.hendisantika.springbookstoreapi.common.APIResponse;
+import id.my.hendisantika.springbookstoreapi.dto.LoginRequestDTO;
 import id.my.hendisantika.springbookstoreapi.dto.SignUpRequestDTO;
 import id.my.hendisantika.springbookstoreapi.entity.User;
 import id.my.hendisantika.springbookstoreapi.repository.UserRepository;
@@ -53,6 +54,31 @@ public class LoginService {
         apiResponse.setData(data);
 
         // return
+        return apiResponse;
+    }
+
+    public APIResponse login(LoginRequestDTO loginRequestDTO) {
+        APIResponse apiResponse = new APIResponse();
+
+        // validation
+
+        // verify user exist with given email and password
+        User user = userRepository.findOneByEmailIdIgnoreCaseAndPassword(loginRequestDTO.getEmailId(), loginRequestDTO.getPassword());
+
+        // response
+        if (user == null) {
+            apiResponse.setData("User login failed");
+            return apiResponse;
+        }
+
+        // generate jwt
+        String token = jwtUtils.generateJwt(user);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("accessToken", token);
+
+        apiResponse.setData(data);
+
         return apiResponse;
     }
 }
