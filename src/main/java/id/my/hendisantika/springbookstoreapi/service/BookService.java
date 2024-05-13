@@ -135,4 +135,10 @@ public class BookService {
         return bookRepository.save(incomingBook);
     }
 
+    // Delete
+    public String deleteById(Long bookId) {
+        bookRepository.deleteById(bookId);
+        return "Deleted Successfully";
+    }
+
 }
