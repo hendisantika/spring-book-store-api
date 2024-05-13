@@ -1,8 +1,12 @@
 package id.my.hendisantika.springbookstoreapi.service;
 
 import id.my.hendisantika.springbookstoreapi.common.BadRequestException;
+import id.my.hendisantika.springbookstoreapi.dto.AuthorDTO;
+import id.my.hendisantika.springbookstoreapi.dto.BookDTO;
 import id.my.hendisantika.springbookstoreapi.dto.BookRequestDTO;
+import id.my.hendisantika.springbookstoreapi.entity.Author;
 import id.my.hendisantika.springbookstoreapi.entity.Book;
+import id.my.hendisantika.springbookstoreapi.entity.BookAuthor;
 import id.my.hendisantika.springbookstoreapi.entity.BookEdition;
 import id.my.hendisantika.springbookstoreapi.repository.BookAuthorRepository;
 import id.my.hendisantika.springbookstoreapi.repository.BookEditionRepository;
@@ -84,4 +88,46 @@ public class BookService {
         }
         return book;
     }
+
+    // Single resource
+    public BookDTO getBookById(Long bookId, boolean authorData) {
+
+        Book book;
+        List<BookAuthor> bookAuthors = null;
+
+        book = bookRepository.findById(bookId).get();
+
+        if (authorData) {
+            bookAuthors = bookAuthorRepository.findAllByBookId(bookId);
+        }
+
+        BookDTO bookDTO = new BookDTO();
+
+        // set book details
+        bookDTO.setId(book.getId());
+        bookDTO.setName(book.getName());
+        bookDTO.setDesc(book.getDesc());
+        bookDTO.setYearOfPublication(book.getYearOfPublication());
+        bookDTO.setBookType(book.getBookType());
+
+        // get author details
+        List<AuthorDTO> authorDTOList = new ArrayList<>();
+        if (bookAuthors != null) {
+            for (BookAuthor bookAuthor : bookAuthors) {
+                Author author = bookAuthor.getAuthor();
+
+                AuthorDTO authorDTO = new AuthorDTO();
+                authorDTO.setId(author.getId());
+                authorDTO.setName(author.getName());
+                authorDTO.setGender(author.getGender());
+
+                authorDTOList.add(authorDTO);
+            }
+
+            // set author details
+            bookDTO.setAuthors(authorDTOList);
+        }
+        return bookDTO;
+    }
+
 }
