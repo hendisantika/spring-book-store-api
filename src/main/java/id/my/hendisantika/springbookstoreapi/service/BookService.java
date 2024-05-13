@@ -1,5 +1,6 @@
 package id.my.hendisantika.springbookstoreapi.service;
 
+import id.my.hendisantika.springbookstoreapi.common.APIResponse;
 import id.my.hendisantika.springbookstoreapi.common.BadRequestException;
 import id.my.hendisantika.springbookstoreapi.dto.AuthorDTO;
 import id.my.hendisantika.springbookstoreapi.dto.BookDTO;
@@ -141,4 +142,20 @@ public class BookService {
         return "Deleted Successfully";
     }
 
+    // raw query - get books
+    public APIResponse getBooksByRawQuery(Set<Integer> yop) {
+        APIResponse apiResponse = new APIResponse();
+
+        // db call
+        List<Book> bookList = bookRepository.findAllByYearOfPublicationIn(yop);
+
+        // set data
+        BookData bookData = new BookData();
+        bookData.setBooks(bookList);
+
+        // set api response
+        apiResponse.setData(bookData);
+
+        return apiResponse;
+    }
 }
