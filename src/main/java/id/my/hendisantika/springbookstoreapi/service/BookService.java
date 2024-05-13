@@ -1,6 +1,9 @@
 package id.my.hendisantika.springbookstoreapi.service;
 
+import id.my.hendisantika.springbookstoreapi.common.BadRequestException;
+import id.my.hendisantika.springbookstoreapi.dto.BookRequestDTO;
 import id.my.hendisantika.springbookstoreapi.entity.Book;
+import id.my.hendisantika.springbookstoreapi.entity.BookEdition;
 import id.my.hendisantika.springbookstoreapi.repository.BookAuthorRepository;
 import id.my.hendisantika.springbookstoreapi.repository.BookEditionRepository;
 import id.my.hendisantika.springbookstoreapi.repository.BookRepository;
@@ -9,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -45,5 +49,39 @@ public class BookService {
         }
 
         return bookList;
+    }
+
+    // Create
+    public Book createBook(BookRequestDTO bookDTO) {
+
+        // validation
+        List<Error> errors = bookValidator.validateCreateBookRequest(bookDTO);
+
+        // if not success
+        if (errors.size() > 0) {
+            throw new BadRequestException("bad request", errors);
+        }
+
+        // if success
+        Book book = new Book();
+        book.setName(bookDTO.getName());
+        book.setBookType(bookDTO.getBookType());
+        book.setDesc(bookDTO.getDesc());
+        book.setYearOfPublication(bookDTO.getYearOfPublication());
+        bookRepository.save(book);
+
+        // populate edition
+        if (!Objects.isNull(bookDTO.getEditions())) {
+            bookDTO.getEditions().forEach(bookEditionDTO -> {
+                BookEdition bookEdition = new BookEdition();
+                bookEdition.setBook(book);
+                bookEdition.setIsbn(bookEditionDTO.getIsbn());
+                bookEdition.setDescription(bookEditionDTO.getDesc());
+                bookEdition.setPageSize(bookEditionDTO.getPageSize());
+                bookEdition.setPrice(bookEditionDTO.getPrice());
+                bookEditionRepository.save(bookEdition);
+            });
+        }
+        return book;
     }
 }
