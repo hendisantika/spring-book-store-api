@@ -1,5 +1,18 @@
 spring:
   application:
-  name:
-    spring-book-store-api
-spring.profiles.active: prod,stage,qa,dev
+    name: spring-book-store-api
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:mysql://localhost:3309/book_store
+    username: yu71
+    password: 53cret!
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
