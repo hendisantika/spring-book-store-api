@@ -1,6 +1,5 @@
 package id.my.hendisantika.springbookstoreapi.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.PageRequest;
@@ -10,6 +9,7 @@ import org.springframework.data.web.SortHandlerMethodArgumentResolver;
 import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
@@ -24,10 +24,9 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 @Configuration
-public class CustomWebConfig {
-    @Autowired
-    private JwtInterceptor jwtInterceptor;
+public class CustomWebConfig implements WebMvcConfigurer {
 
+    @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         //sort
         SortHandlerMethodArgumentResolver sortResolver = new SortHandlerMethodArgumentResolver();
@@ -47,7 +46,7 @@ public class CustomWebConfig {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(jwtInterceptor);
+        registry.addInterceptor(jwtInterceptor());
     }
 
     @Bean

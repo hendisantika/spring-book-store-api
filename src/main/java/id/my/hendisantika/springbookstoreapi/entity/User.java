@@ -1,14 +1,15 @@
 package id.my.hendisantika.springbookstoreapi.entity;
 
 import id.my.hendisantika.springbookstoreapi.common.Constant;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
+
+import java.time.LocalDateTime;
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,14 +36,14 @@ public class User {
     private String phoneNumber;
     private String userType = Constant.USER_TYPE.NORMAL;
     private String password;
-    private Boolean isActive = true;
+    private Boolean active = true;
     private Integer loginCount = 0;
     private String ssoType;
-    private DateTime loginAt;
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime createdAt;
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime updatedAt;
+    private LocalDateTime loginAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
 
 }

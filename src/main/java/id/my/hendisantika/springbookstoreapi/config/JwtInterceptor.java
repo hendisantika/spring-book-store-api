@@ -1,10 +1,12 @@
 package id.my.hendisantika.springbookstoreapi.config;
 
+import id.my.hendisantika.springbookstoreapi.util.JwtUtils;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
  * Created by IntelliJ IDEA.
@@ -17,7 +19,7 @@ import org.springframework.stereotype.Component;
  * To change this template use File | Settings | File Templates.
  */
 @Component
-public class JwtInterceptor extends HandlerInterceptorAdapter {
+public class JwtInterceptor implements HandlerInterceptor {
 
     @Autowired
     private JwtUtils jwtUtils;
@@ -43,6 +45,6 @@ public class JwtInterceptor extends HandlerInterceptorAdapter {
 
         }
 
-        return super.preHandle(request, response, handler);
+        return true;
     }
 }

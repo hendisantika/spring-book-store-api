@@ -64,7 +64,7 @@ public class BookService {
     public Book createBook(BookRequestDTO bookDTO) {
 
         // validation
-        List<Error> errors = bookValidator.validateCreateBookRequest(bookDTO);
+        List<id.my.hendisantika.springbookstoreapi.common.Error> errors = bookValidator.validateCreateBookRequest(bookDTO);
 
         // if not success
         if (errors.size() > 0) {

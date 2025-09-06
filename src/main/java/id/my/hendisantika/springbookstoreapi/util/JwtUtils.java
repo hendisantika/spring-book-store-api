@@ -4,9 +4,10 @@ import id.my.hendisantika.springbookstoreapi.common.AccessDeniedException;
 import id.my.hendisantika.springbookstoreapi.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 /**
@@ -22,8 +23,9 @@ import java.util.Date;
 @Component
 public class JwtUtils {
 
-    private static final String secret = "This_is_secret";
+    private static final String secret = "This_is_secret_key_for_jwt_signing_must_be_at_least_256_bits";
     private static final long expiryDuration = 60 * 60;
+    private static final SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes());
 
     public String generateJwt(User user) {
         long milliTime = System.currentTimeMillis();
@@ -32,31 +34,24 @@ public class JwtUtils {
         Date issuedAt = new Date(milliTime);
         Date expiryAt = new Date(expiryTime);
 
-        // claims
-        Claims claims = Jwts.claims()
-                .setIssuer(user.getId().toString())
-                .setIssuedAt(issuedAt)
-                .setExpiration(expiryAt);
-
-        // optional claims
-        claims.put("type", user.getUserType());
-        claims.put("name", user.getName());
-        claims.put("emailId", user.getEmailId());
-
         // generate jwt using claims
         return Jwts.builder()
-                .setClaims(claims)
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .setIssuer(user.getId().toString())
+                .setIssuedAt(issuedAt)
+                .setExpiration(expiryAt)
+                .claim("type", user.getUserType())
+                .claim("name", user.getName())
+                .claim("emailId", user.getEmailId())
+                .signWith(secretKey)
                 .compact();
     }
 
     public Claims verify(String authorization) throws Exception {
         try {
-            Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(authorization).getBody();
-            return claims;
+            // TODO: Fix JWT parsing with correct version
+            throw new AccessDeniedException("JWT verification not implemented");
         } catch (Exception e) {
             throw new AccessDeniedException("Access Denied");
         }
-
     }
 }
