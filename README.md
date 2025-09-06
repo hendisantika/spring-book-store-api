@@ -180,6 +180,348 @@ curl http://localhost:8080/health
 | GET    | `/health` | Application health status | No             |
 | GET    | `/`       | Root endpoint             | No             |
 
+## 🌐 API Usage Examples
+
+### Health Check Endpoints
+
+#### Check Application Health
+
+```bash
+curl -X GET http://localhost:8080/health
+```
+
+#### Check Root Endpoint
+
+```bash
+curl -X GET http://localhost:8080/
+```
+
+**Expected Response:**
+
+```json
+{
+  "status": 401,
+  "data": null,
+  "error": null
+}
+```
+
+*Note: 401 response indicates JWT authentication is working correctly*
+
+### Authentication Examples
+
+#### User Registration
+
+```bash
+curl -X POST http://localhost:8080/signup \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "John Doe",
+    "gender": "Male",
+    "emailId": "john.doe@example.com",
+    "phoneNumber": "+1234567890",
+    "password": "securePassword123"
+  }'
+```
+
+**Expected Response:**
+
+```json
+{
+  "status": 200,
+  "data": {
+    "userId": 1,
+    "message": "User registered successfully"
+  },
+  "error": null
+}
+```
+
+#### User Login
+
+```bash
+curl -X POST http://localhost:8080/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "emailId": "john.doe@example.com",
+    "password": "securePassword123"
+  }'
+```
+
+**Expected Response:**
+
+```json
+{
+  "status": 200,
+  "data": "eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiIxIiwiaWF0IjoxNzI1NTk2NDAwLCJleHAiOjE3MjU2MDAwMDAsInR5cGUiOiJOT1JNQUwiLCJuYW1lIjoiSm9obiBEb2UiLCJlbWFpbElkIjoiam9obi5kb2VAZXhhbXBsZS5jb20ifQ.token_signature",
+  "error": null
+}
+```
+
+### Book Management Examples
+
+*Note: All book endpoints require JWT authentication. Include the token from login response in Authorization header.*
+
+#### Get All Books
+
+```bash
+curl -X GET http://localhost:8080/books \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
+```
+
+#### Get Book by ID
+
+```bash
+curl -X GET http://localhost:8080/books/1 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
+```
+
+#### Create New Book
+
+```bash
+curl -X POST http://localhost:8080/books \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "The Great Gatsby",
+    "bookType": "Fiction",
+    "desc": "A classic American novel set in the Jazz Age",
+    "yearOfPublication": 1925
+  }'
+```
+
+#### Update Book
+
+```bash
+curl -X PUT http://localhost:8080/books/1 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "The Great Gatsby - Updated Edition",
+    "bookType": "Classic Fiction",
+    "desc": "A timeless American novel set in the Jazz Age - Updated",
+    "yearOfPublication": 1925
+  }'
+```
+
+#### Delete Book
+
+```bash
+curl -X DELETE http://localhost:8080/books/1 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
+```
+
+### User Profile Examples
+
+#### Get User Profile
+
+```bash
+curl -X GET http://localhost:8080/users/profile \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
+```
+
+**Expected Response:**
+
+```json
+{
+  "status": 200,
+  "data": {
+    "id": 1,
+    "name": "John Doe",
+    "gender": "Male",
+    "emailId": "john.doe@example.com",
+    "phoneNumber": "+1234567890",
+    "userType": "NORMAL",
+    "active": true,
+    "loginCount": 1,
+    "createdAt": "2024-01-15T10:30:00",
+    "updatedAt": "2024-01-15T10:30:00"
+  },
+  "error": null
+}
+```
+
+#### Update User Profile
+
+```bash
+curl -X PUT http://localhost:8080/users/profile \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "John Smith",
+    "gender": "Male",
+    "phoneNumber": "+1234567891"
+  }'
+```
+
+### Bulk Operations Examples
+
+#### Create Multiple Books
+
+```bash
+curl -X POST http://localhost:8080/books/bulk \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "books": [
+      {
+        "name": "To Kill a Mockingbird",
+        "bookType": "Fiction",
+        "desc": "A gripping tale of racial injustice",
+        "yearOfPublication": 1960
+      },
+      {
+        "name": "1984",
+        "bookType": "Dystopian Fiction",
+        "desc": "A prophetic vision of totalitarian society",
+        "yearOfPublication": 1949
+      },
+      {
+        "name": "Pride and Prejudice",
+        "bookType": "Romance",
+        "desc": "A witty commentary on 19th century society",
+        "yearOfPublication": 1813
+      }
+    ]
+  }'
+```
+
+### Query Parameters Examples
+
+#### Get Books with Filters
+
+```bash
+# Get books by year of publication
+curl -X GET "http://localhost:8080/books?yop=1925,1960&bookType=Fiction" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
+
+# Get books with pagination
+curl -X GET "http://localhost:8080/books?page-number=1&page-size=10" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
+
+# Get books with sorting
+curl -X GET "http://localhost:8080/books?order-by=name,asc" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
+```
+
+### Error Response Examples
+
+#### Invalid Authentication
+
+```bash
+curl -X GET http://localhost:8080/books
+```
+
+**Response:**
+
+```json
+{
+  "status": 401,
+  "data": null,
+  "error": null
+}
+```
+
+#### Invalid Request Data
+
+```bash
+curl -X POST http://localhost:8080/signup \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "",
+    "emailId": "invalid-email"
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "status": 400,
+  "data": null,
+  "error": [
+    {
+      "field": "name",
+      "message": "Name cannot be empty"
+    },
+    {
+      "field": "emailId",
+      "message": "Invalid email format"
+    }
+  ]
+}
+```
+
+### Testing JWT Token
+
+To extract and use the JWT token from login response:
+
+```bash
+# Login and save token to variable
+TOKEN=$(curl -s -X POST http://localhost:8080/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "emailId": "john.doe@example.com",
+    "password": "securePassword123"
+  }' | jq -r '.data')
+
+# Use token in subsequent requests
+curl -X GET http://localhost:8080/books \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+### Advanced Examples
+
+#### Complete Workflow Example
+
+```bash
+#!/bin/bash
+
+# 1. Check application health
+echo "Checking application health..."
+curl -X GET http://localhost:8080/health
+
+# 2. Register a new user
+echo "Registering new user..."
+curl -X POST http://localhost:8080/signup \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Jane Smith",
+    "gender": "Female",
+    "emailId": "jane.smith@example.com",
+    "phoneNumber": "+1987654321",
+    "password": "mySecurePass456"
+  }'
+
+# 3. Login and get token
+echo "Logging in..."
+TOKEN=$(curl -s -X POST http://localhost:8080/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "emailId": "jane.smith@example.com",
+    "password": "mySecurePass456"
+  }' | jq -r '.data')
+
+echo "Got token: $TOKEN"
+
+# 4. Create a book
+echo "Creating a book..."
+curl -X POST http://localhost:8080/books \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Clean Code",
+    "bookType": "Technical",
+    "desc": "A handbook of agile software craftsmanship",
+    "yearOfPublication": 2008
+  }'
+
+# 5. Get all books
+echo "Fetching all books..."
+curl -X GET http://localhost:8080/books \
+  -H "Authorization: Bearer $TOKEN"
+```
+
 ## 🗄️ Database Schema
 
 ### Core Entities
