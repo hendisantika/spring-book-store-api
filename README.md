@@ -682,6 +682,66 @@ mvn integration-test
 
 Tests use an embedded H2 database for isolation.
 
+### Testing P6Spy Database Query Monitoring
+
+P6Spy is configured to monitor and log all SQL queries. To test if P6Spy is working:
+
+1. **Check P6Spy Configuration**
+   ```bash
+   cat src/main/resources/spy.properties
+   ```
+
+2. **Update Database URL for P6Spy** (if not already configured)
+
+   Change your `application.yml` datasource URL to:
+   ```yaml
+   spring:
+     datasource:
+       url: jdbc:p6spy:mysql://localhost:3309/book_store
+       driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+   ```
+
+3. **Start Application and Check Logs**
+   ```bash
+   mvn spring-boot:run
+   ```
+
+4. **Trigger Database Operations and Monitor**
+   ```bash
+   # In another terminal, trigger some database operations
+   curl -X POST http://localhost:8080/signup \
+     -H "Content-Type: application/json" \
+     -d '{
+       "name": "Test User",
+       "gender": "Male",
+       "emailId": "test@example.com",
+       "phoneNumber": "+1234567890",
+       "password": "testPassword123"
+     }'
+
+   # Check the database.log file for SQL queries
+   tail -f database.log
+   ```
+
+5. **Expected P6Spy Output**
+   ```
+   2024-01-15 10:30:15|2ms|statement|INSERT INTO user (active, created_at, email_id, gender, login_at, login_count, name, password, phone_number, sso_type, updated_at, user_type, id) VALUES (TRUE, '2024-01-15 10:30:15.123', 'test@example.com', 'Male', NULL, 0, 'Test User', '$2a$10$...', '+1234567890', NULL, '2024-01-15 10:30:15.123', 'NORMAL', 1)
+   ```
+
+6. **Alternative: Console Logging**
+
+   For console output instead of file logging, update `spy.properties`:
+   ```properties
+   appender=com.p6spy.engine.spy.appender.Slf4JLogger
+   ```
+
+The P6Spy logs will show:
+
+- Execution time for each query
+- Complete SQL statements with actual values
+- Database connection information
+- Query categories (statement, prepared statement, etc.)
+
 ## 🔧 Troubleshooting
 
 ### Common Issues
