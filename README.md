@@ -158,20 +158,53 @@ curl http://localhost:8080/health
 
 ### Book Management
 
-| Method | Endpoint      | Description     | Authentication |
-|--------|---------------|-----------------|----------------|
-| GET    | `/books`      | Get all books   | Yes            |
-| GET    | `/books/{id}` | Get book by ID  | Yes            |
-| POST   | `/books`      | Create new book | Yes            |
-| PUT    | `/books/{id}` | Update book     | Yes            |
-| DELETE | `/books/{id}` | Delete book     | Yes            |
+| Method | Endpoint                | Description              | Authentication |
+|--------|-------------------------|--------------------------|----------------|
+| GET    | `/books`                | Get all books            | Yes            |
+| GET    | `/books/{id}`           | Get book by ID           | Yes            |
+| POST   | `/books`                | Create new book          | Yes            |
+| PUT    | `/books/{id}`           | Update book              | Yes            |
+| DELETE | `/books/{id}`           | Delete book              | Yes            |
+| GET    | `/books/raw`            | Get books by raw query   | Yes            |
+| GET    | `/books/querydsl`       | Get books using QueryDSL | Yes            |
+| POST   | `/books/bulk`           | Bulk create books        | Yes            |
+| GET    | `/books/test-exception` | Test exception handling  | Yes            |
+
+### Author Management
+
+| Method | Endpoint           | Description                    | Authentication |
+|--------|--------------------|--------------------------------|----------------|
+| GET    | `/authors`         | Get all authors (paginated)    | Yes            |
+| GET    | `/authors/ordered` | Get authors ordered by ID desc | Yes            |
+| GET    | `/authors/{id}`    | Get author by ID               | Yes            |
+| POST   | `/authors`         | Create new author              | Yes            |
+| PUT    | `/authors/{id}`    | Update author                  | Yes            |
+| DELETE | `/authors/{id}`    | Delete author                  | Yes            |
+
+### Book Edition Management
+
+| Method | Endpoint                       | Description                  | Authentication |
+|--------|--------------------------------|------------------------------|----------------|
+| GET    | `/book-editions`               | Get all book editions        | Yes            |
+| GET    | `/book-editions/{id}`          | Get book edition by ID       | Yes            |
+| GET    | `/book-editions/book/{bookId}` | Get book editions by book ID | Yes            |
+| POST   | `/book-editions`               | Create new book edition      | Yes            |
+| PUT    | `/book-editions/{id}`          | Update book edition          | Yes            |
+| DELETE | `/book-editions/{id}`          | Delete book edition          | Yes            |
 
 ### User Management
 
-| Method | Endpoint         | Description         | Authentication |
-|--------|------------------|---------------------|----------------|
-| GET    | `/users/profile` | Get user profile    | Yes            |
-| PUT    | `/users/profile` | Update user profile | Yes            |
+| Method | Endpoint                 | Description             | Authentication |
+|--------|--------------------------|-------------------------|----------------|
+| GET    | `/users`                 | Get all users           | Yes            |
+| GET    | `/users/{id}`            | Get user by ID          | Yes            |
+| GET    | `/users/profile`         | Get user profile        | Yes            |
+| POST   | `/users`                 | Create new user         | Yes            |
+| PUT    | `/users/{id}`            | Update user             | Yes            |
+| PUT    | `/users/profile`         | Update user profile     | Yes            |
+| DELETE | `/users/{id}`            | Delete user             | Yes            |
+| PUT    | `/users/{id}/deactivate` | Deactivate user account | Yes            |
+| PUT    | `/users/{id}/activate`   | Activate user account   | Yes            |
 
 ### Health Check
 
@@ -384,6 +417,197 @@ curl -X POST http://localhost:8080/books/bulk \
       }
     ]
   }'
+```
+
+### Author Management Examples
+
+*Note: All author endpoints require JWT authentication. Include the token from login response in Authorization header.*
+
+#### Get All Authors with Pagination
+
+```bash
+curl -X GET "http://localhost:8080/authors?page-number=0&page-size=10&order-by=name&sort-by=asc" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
+```
+
+#### Get Authors Ordered by ID (Descending)
+
+```bash
+curl -X GET "http://localhost:8080/authors/ordered?page-number=0&page-size=5" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
+```
+
+#### Get Author by ID
+
+```bash
+curl -X GET http://localhost:8080/authors/1 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
+```
+
+#### Create New Author
+
+```bash
+curl -X POST http://localhost:8080/authors \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "J.K. Rowling",
+    "gender": "Female"
+  }'
+```
+
+#### Update Author
+
+```bash
+curl -X PUT http://localhost:8080/authors/1 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Joanne Rowling",
+    "gender": "Female"
+  }'
+```
+
+#### Delete Author
+
+```bash
+curl -X DELETE http://localhost:8080/authors/1 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
+```
+
+### Book Edition Management Examples
+
+*Note: All book edition endpoints require JWT authentication.*
+
+#### Get All Book Editions
+
+```bash
+# Without pagination
+curl -X GET http://localhost:8080/book-editions \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
+
+# With pagination
+curl -X GET "http://localhost:8080/book-editions?page-number=0&page-size=10&order-by=price&sort-by=desc" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
+```
+
+#### Get Book Edition by ID
+
+```bash
+curl -X GET http://localhost:8080/book-editions/1 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
+```
+
+#### Get Book Editions by Book ID
+
+```bash
+curl -X GET http://localhost:8080/book-editions/book/1 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
+```
+
+#### Create New Book Edition
+
+```bash
+curl -X POST http://localhost:8080/book-editions \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "price": 2999,
+    "pageSize": 350,
+    "description": "Hardcover first edition",
+    "isbn": "978-0-7432-7356-5",
+    "book": {
+      "id": 1
+    }
+  }'
+```
+
+#### Update Book Edition
+
+```bash
+curl -X PUT http://localhost:8080/book-editions/1 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "price": 1999,
+    "pageSize": 350,
+    "description": "Paperback edition",
+    "isbn": "978-0-7432-7356-5"
+  }'
+```
+
+#### Delete Book Edition
+
+```bash
+curl -X DELETE http://localhost:8080/book-editions/1 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
+```
+
+### Advanced User Management Examples
+
+*Note: All user endpoints require JWT authentication.*
+
+#### Get All Users with Pagination
+
+```bash
+curl -X GET "http://localhost:8080/users?page-number=0&page-size=10&order-by=createdAt&sort-by=desc" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
+```
+
+#### Get User by ID
+
+```bash
+curl -X GET http://localhost:8080/users/1 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
+```
+
+#### Create New User (Admin Operation)
+
+```bash
+curl -X POST http://localhost:8080/users \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Admin User",
+    "gender": "Male",
+    "emailId": "admin@bookstore.com",
+    "phoneNumber": "+1234567890",
+    "userType": "ADMIN",
+    "password": "adminPassword123"
+  }'
+```
+
+#### Update User
+
+```bash
+curl -X PUT http://localhost:8080/users/1 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Updated User Name",
+    "phoneNumber": "+1987654321"
+  }'
+```
+
+#### Deactivate User Account
+
+```bash
+curl -X PUT http://localhost:8080/users/1/deactivate \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
+```
+
+#### Activate User Account
+
+```bash
+curl -X PUT http://localhost:8080/users/1/activate \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
+```
+
+#### Delete User
+
+```bash
+curl -X DELETE http://localhost:8080/users/1 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
 ```
 
 ### Query Parameters Examples
