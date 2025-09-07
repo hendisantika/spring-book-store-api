@@ -6,11 +6,13 @@ import id.my.hendisantika.springbookstoreapi.data.AuthorData;
 import id.my.hendisantika.springbookstoreapi.entity.Author;
 import id.my.hendisantika.springbookstoreapi.repository.AuthorRepository;
 import lombok.RequiredArgsConstructor;
+import org.joda.time.DateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by IntelliJ IDEA.
@@ -60,5 +62,36 @@ public class AuthorService {
 
         apiResponse.setData(authorData);
         return apiResponse;
+    }
+
+    public Author getAuthorById(Long id) {
+        Optional<Author> authorOpt = authorRepository.findById(id);
+        return authorOpt.orElse(null);
+    }
+
+    public Author createAuthor(Author author) {
+        author.setCreatedAt(new DateTime());
+        author.setUpdatedAt(new DateTime());
+        return authorRepository.save(author);
+    }
+
+    public Author updateAuthor(Long id, Author authorUpdate) {
+        Optional<Author> existingAuthorOpt = authorRepository.findById(id);
+        if (existingAuthorOpt.isPresent()) {
+            Author existingAuthor = existingAuthorOpt.get();
+            existingAuthor.setName(authorUpdate.getName());
+            existingAuthor.setGender(authorUpdate.getGender());
+            existingAuthor.setUpdatedAt(new DateTime());
+            return authorRepository.save(existingAuthor);
+        }
+        return null;
+    }
+
+    public String deleteAuthor(Long id) {
+        if (authorRepository.existsById(id)) {
+            authorRepository.deleteById(id);
+            return "Author deleted successfully";
+        }
+        return "Author not found";
     }
 }
