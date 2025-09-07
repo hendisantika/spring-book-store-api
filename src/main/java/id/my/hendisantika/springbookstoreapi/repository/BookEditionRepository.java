@@ -1,8 +1,10 @@
 package id.my.hendisantika.springbookstoreapi.repository;
 
 import id.my.hendisantika.springbookstoreapi.entity.BookEdition;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,5 +17,7 @@ import org.springframework.stereotype.Repository;
  * To change this template use File | Settings | File Templates.
  */
 @Repository
-public interface BookEditionRepository extends CrudRepository<BookEdition, Long> {
+public interface BookEditionRepository extends JpaRepository<BookEdition, Long> {
+
+    List<BookEdition> findByBookId(Long bookId);
 }
